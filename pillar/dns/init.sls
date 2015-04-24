@@ -9,5 +9,5 @@ dnsmasq:
     #mon-2: 10.8.8.134
     #mon-3: 10.8.8.135
     #adm-1: 10.8.8.136
-    saltmaster: 10.8.8.141
-  iface: eth0
+    saltmaster: 10.8.8.137
+  iface: eth1

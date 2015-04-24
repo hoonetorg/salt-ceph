@@ -1,7 +1,7 @@
-{% if data['act'] == 'accept'%}
+{% if data['act'] == 'accept' %}
 add_host_in_dns:
   local.cmd.run:
-    - tgt: 'dns-ceph-*'
+    - tgt: 'id:dns-ceph-*'
     - arg:
-      - echo data['id'] >> /tmp/added_hosts
+      - touch /tmp/{{ data['id'] }}
 {% endif %}

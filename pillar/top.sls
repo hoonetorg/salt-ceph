@@ -2,6 +2,8 @@ base:
   '*':
     - base
     - base.hosts
+  'dns-ceph-*':
+    - dns
   'ceph-adm-*':
     - adm
   'ceph-mon-*':

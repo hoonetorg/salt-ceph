@@ -1,5 +1,5 @@
-interface: 10.8.8.137
-#interface: 0.0.0.0
+#interface: 10.8.8.137
+interface: 0.0.0.0
 
 file_roots:
   base:

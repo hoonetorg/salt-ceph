@@ -19,9 +19,19 @@ dnsmasq:
     - watch:
       - file: {{ pillar.dnsmasq.cfg_file }}
 
-dns host list:
-  file.append:
-    - name: /etc/hosts
-    - text:
-      {% for name, ip in pillar.dnsmasq.hosts.items() %} - "{{ ip }} {{ name }}"
-      {% endfor %}
+remove loopback alias 0:
+  host.absent:
+    - name: {{ grains.nodename }}
+    - ip: 127.0.0.1
+
+remove loopback alias 1:
+  host.absent:
+    - name: {{ grains.nodename }}
+    - ip: 127.0.1.1
+
+{% for name, ip in pillar.dnsmasq.hosts.items() %}
+cluster node {{ name }}:
+  host.present:
+    - name: {{ name }}
+    - ip: {{ ip }}
+{% endfor %}
