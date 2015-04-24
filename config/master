@@ -1,4 +1,3 @@
-#interface: 10.8.8.137
 interface: 0.0.0.0
 
 file_roots:
@@ -8,7 +7,3 @@ file_roots:
 pillar_roots:
   base:
     - /srv/salt/pillar
-
-reactor:
-  - 'salt/auth':
-    - /srv/salt/reactor/add_host.sls

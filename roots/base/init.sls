@@ -50,30 +50,7 @@ ceph user ssh authorized keys file:
 ceph ssh authorized key:
   file.append:
     - name: /home/{{ pillar.base.ceph.user.name }}/.ssh/authorized_keys
-    - source: salt://base/bucket/ssh/{{ grains.id }}.pub
-
-#
-# cluster nameserver and domain
-#
-
-cluster resolvconf:
-  file.blockreplace:
-    - name: /etc/resolv.conf
-    - marker_start: "### START ZONE {{ pillar.base.domain }}"
-    - marker_end: "### END ZONE {{ pillar.base.domain }}"
-    - prepend_if_not_found: True
-    - backup: '.bak'
-    - show_changes: True
-    - content: ''
-
-cluster zone {{ pillar.base.domain }}:
-  file.accumulated:
-    - filename: /etc/resolv.conf
-    - name: zone {{ pillar.base.domain }}
-    - require_in:
-      - file: cluster resolvconf
-    - text:
-      - "domain {{ pillar.base.domain }}"
-      - "search {{ pillar.base.domain }}"
-      {% for nameserver in pillar.base.nameservers %}- "nameserver {{ nameserver }}"
+    - sources:
+      {% for node in pillar.nodes.adm %}
+      - salt://base/bucket/ssh/{{ node }}.pub
       {% endfor %}

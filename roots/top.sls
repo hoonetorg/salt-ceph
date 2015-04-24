@@ -1,11 +1,11 @@
 base:
   '*':
     - base
-  'dns-ceph-*':
-    - dns
   'ceph-adm-*':
     - adm
   'ceph-mon-*':
+    - base.ferm
     - monitor
   'ceph-osd-*':
+    - base.ferm
     - osd

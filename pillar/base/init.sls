@@ -7,10 +7,6 @@ base:
     base: [
       'tmux',
     ]
-  domain: ceph.cluster
-  nameservers: [
-    '10.8.8.141',
-  ]
   ceph:
     user:
       name: cephyu

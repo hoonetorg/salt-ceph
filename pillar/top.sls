@@ -1,9 +1,7 @@
 base:
   '*':
     - base
-    - base.hosts
-  'dns-ceph-*':
-    - dns
+    - base.nodes
   'ceph-adm-*':
     - adm
   'ceph-mon-*':
