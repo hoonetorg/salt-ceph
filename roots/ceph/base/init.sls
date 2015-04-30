@@ -5,6 +5,7 @@
 ceph repo:
   pkgrepo.managed:
     - name: {{ pillar.base.repos.ceph.name }}
+    - file: {{ pillar.base.repos.ceph.file }}
     - key_url: {{ pillar.base.repos.ceph.key_url }}
 
 {% for listname, pkglist in pillar.base.pkgs.items() %}
