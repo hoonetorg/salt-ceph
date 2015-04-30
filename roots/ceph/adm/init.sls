@@ -43,7 +43,7 @@ create ceph cluster:
     - name: ceph-deploy new {% for node in pillar.cluster.nodes.initial %} {{
       node }}{% endfor %}
     - user: {{ user_name }}
-    - cwd: {{ user_home }}
+    - cwd: {{ ceph_dir }}
     - unless: test -f {{ ceph_dir }}/ceph.mon.keyring
     - watch_in:
       - cmd: ceph deploy nodes
