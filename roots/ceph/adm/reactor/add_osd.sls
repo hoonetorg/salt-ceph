@@ -14,7 +14,7 @@ install ceph on osd {{ osd_name }}:
     - user: {{ user_name }}
     - cwd: {{ ceph_dir }}
 
-prepare osd {{ osd_name }}:
+zap osd {{ osd_name }}:
   cmd.run:
     - name: ceph-deploy osd zap {% for disk, path in pillar.osd.pathlist.items()
       %}{{ osd_name }}:{{ disk }} {% endfor %}
