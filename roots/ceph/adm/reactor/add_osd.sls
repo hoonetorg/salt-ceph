@@ -16,14 +16,21 @@ install ceph on osd {{ osd_name }}:
 
 prepare osd {{ osd_name }}:
   cmd.run:
-    - name: ceph-deploy osd prepare {% for path in pillar.osd.pathlist
-      %}{{ osd_name }}:{{ path }} {% endfor %}
+    - name: ceph-deploy osd zap {% for disk, path in pillar.osd.pathlist.items()
+      %}{{ osd_name }}:{{ disk }} {% endfor %}
+    - user: {{ user_name }}
+    - cwd: {{ ceph_dir }}
+
+prepare osd {{ osd_name }}:
+  cmd.run:
+    - name: ceph-deploy osd prepare {% for disk, path in pillar.osd.pathlist.items()
+      %}{{ osd_name }}:{{ disk }} {% endfor %}
     - user: {{ user_name }}
     - cwd: {{ ceph_dir }}
 
 activate osd {{ osd_name }}:
   cmd.run:
-    - name: ceph-deploy osd activate {% for path in pillar.osd.pathlist
+    - name: ceph-deploy osd activate {% for disk, path in pillar.osd.pathlist.items()
       %}{{ osd_name }}:{{ path }} {% endfor %}
     - user: {{ user_name }}
     - cwd: {{ ceph_dir }}

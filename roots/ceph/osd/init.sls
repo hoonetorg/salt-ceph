@@ -10,5 +10,4 @@ add_osd {{ grains.id }} event:
   event.wait:
     - name: 'ceph/osd/add'
     - data:
-        pathlist: [{% for disk, path in pillar.osd.disks.items()
-          %}"{{ path }}", {% endfor %}]
+        pathlist: {{ pillar.osd.disks }}
