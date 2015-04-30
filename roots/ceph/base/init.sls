@@ -52,5 +52,5 @@ ceph ssh authorized key:
     - name: /home/{{ pillar.base.ceph.user.name }}/.ssh/authorized_keys
     - sources:
       {% for node in pillar.nodes.adm %}
-      - salt://base/bucket/ssh/{{ node }}.pub
+      - salt://ceph/base/bucket/ssh/{{ node }}.pub
       {% endfor %}

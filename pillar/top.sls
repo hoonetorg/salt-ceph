@@ -1,10 +1,14 @@
 base:
   '*':
-    - base
-    - base.nodes
+    - ceph.base
+    - ceph.base.nodes
   'ceph-adm-*':
-    - adm
+    - ceph.adm
+    - ceph.cluster.nodes
+    - ceph.cluster.config
+  'ceph-mds-*':
+    - ceph.mds
   'ceph-mon-*':
-    - monitor
+    - ceph.monitor
   'ceph-osd-*':
-    - osd
+    - ceph.osd

@@ -1,11 +1,14 @@
 base:
   '*':
-    - base
+    - ceph.base
   'ceph-adm-*':
-    - adm
+    - ceph.adm
+  'ceph-mds-*':
+    - ceph.base.ferm
+    - ceph.mds
   'ceph-mon-*':
-    - base.ferm
-    - monitor
+    - ceph.base.ferm
+    - ceph.monitor
   'ceph-osd-*':
-    - base.ferm
-    - osd
+    - ceph.base.ferm
+    - ceph.osd
