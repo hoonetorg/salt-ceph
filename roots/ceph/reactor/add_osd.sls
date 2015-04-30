@@ -7,4 +7,4 @@ add osd with adm node:
         pillar:
           osd:
             name: {{ data.id }}
-            path: {{ data.data.path }}
+            pathlist: {{ data.data.pathlist }}

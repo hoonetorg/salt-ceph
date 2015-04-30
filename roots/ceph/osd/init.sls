@@ -3,11 +3,12 @@ ceph osd dir disk_{{ disk }}:
   file.directory:
     - name: {{ path }}
     - watch_in:
-      - event: add_osd disk_{{ disk }} event
+      - event: add_osd {{ grains.id }} event
+{% endfor %}
 
-add_osd disk_{{ disk }} event:
+add_osd {{ grains.id }} event:
   event.wait:
     - name: 'ceph/osd/add'
     - data:
-        path: {{ path }}
-{% endfor %}
+        pathlist: [{% for disk, path in pillar.osd.disks.items()
+          %}"{{ path }}", {% endfor %}]
