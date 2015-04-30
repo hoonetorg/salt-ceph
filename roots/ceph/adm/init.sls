@@ -29,6 +29,13 @@ node {{ node }} ssh fingerprint:
     - name: ssh-keyscan -H {{ node }} >> {{ user_home }}/.ssh/known_hosts
     - user: {{ user_name }}
     - unless: test -n "`ssh-keygen -q -H -F {{ node }} `"
+
+{% set shortname = node.split('.')[0] %}
+shortname {{ shortname }} ssh fingerprint:
+  cmd.run:
+    - name: ssh-keyscan -H {{ shortname }} >> {{ user_home }}/.ssh/known_hosts
+    - user: {{ user_name }}
+    - unless: test -n "`ssh-keygen -q -H -F {{ shortname }} `"
 {% endfor %}
 
 ceph cluster dir:
