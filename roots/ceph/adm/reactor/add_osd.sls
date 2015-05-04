@@ -22,11 +22,13 @@ zap osd {{ osd_name }}:
     - cwd: {{ ceph_dir }}
 
 prepare osd {{ osd_name }}:
-  cmd.run:
+  cmd.wait:
     - name: ceph-deploy osd prepare {% for disk in pillar.osd.disklist
       %}{{ osd_name }}:{{ disk }} {% endfor %} --fs-type=ext4
     - user: {{ user_name }}
     - cwd: {{ ceph_dir }}
+    - watch:
+      - cmd: zap osd {{ osd_name }}
 
 ## unnecessary since ceph creates udev rules to automatically activate on
 ## partition creation
