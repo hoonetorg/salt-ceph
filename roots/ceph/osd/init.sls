@@ -1,7 +1,8 @@
 {% for disk in pillar.osd.disks %}
 ceph osd dir disk_{{ disk }}:
   file.directory:
-    - name: {{ path }}
+    - name: /var/local/osd/{{ disk }}
+    - makedirs: True
     - watch_in:
       - event: add_osd {{ grains.id }} event
 {% endfor %}
