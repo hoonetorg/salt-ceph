@@ -16,21 +16,23 @@ install ceph on osd {{ osd_name }}:
 
 zap osd {{ osd_name }}:
   cmd.run:
-    - name: ceph-deploy osd zap {% for disk, path in pillar.osd.pathlist.items()
+    - name: ceph-deploy osd zap {% for disk in pillar.osd.disklist
       %}{{ osd_name }}:{{ disk }} {% endfor %}
     - user: {{ user_name }}
     - cwd: {{ ceph_dir }}
 
 prepare osd {{ osd_name }}:
   cmd.run:
-    - name: ceph-deploy osd prepare {% for disk, path in pillar.osd.pathlist.items()
-      %}{{ osd_name }}:{{ disk }} {% endfor %}
+    - name: ceph-deploy osd prepare {% for disk in pillar.osd.disklist
+      %}{{ osd_name }}:{{ disk }} {% endfor %} --fs-type=ext4
     - user: {{ user_name }}
     - cwd: {{ ceph_dir }}
 
-activate osd {{ osd_name }}:
-  cmd.run:
-    - name: ceph-deploy osd activate {% for disk, path in pillar.osd.pathlist.items()
-      %}{{ osd_name }}:{{ path }} {% endfor %}
-    - user: {{ user_name }}
-    - cwd: {{ ceph_dir }}
+## unnecessary since ceph creates udev rules to automatically activate on
+## partition creation
+#activate osd {{ osd_name }}:
+#  cmd.run:
+#    - name: ceph-deploy osd activate {% for disk in pillar.osd.disklist
+#      %}{{ osd_name }}:{{ disk }}1 {% endfor %}
+#    - user: {{ user_name }}
+#    - cwd: {{ ceph_dir }}
