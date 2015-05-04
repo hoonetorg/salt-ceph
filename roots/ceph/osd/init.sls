@@ -1,4 +1,4 @@
-{% for disk, path in pillar.osd.disks %}
+{% for disk in pillar.osd.disks %}
 ceph osd dir disk_{{ disk }}:
   file.directory:
     - name: {{ path }}
