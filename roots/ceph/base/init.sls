@@ -6,7 +6,7 @@ ceph repo:
   pkgrepo.managed:
     - name: {{ pillar.base.repos.ceph.name }}
     - file: {{ pillar.base.repos.ceph.file }}
-{% pillar.base.repos.ceph.key_url %}
+{% if pillar.base.repos.ceph.key_url is defined %}
     - key_url: {{ pillar.base.repos.ceph.key_url }}
 {% endif %}
 
