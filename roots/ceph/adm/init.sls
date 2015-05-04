@@ -66,7 +66,7 @@ ceph deploy nodes:
   cmd.wait:
     - name: ceph-deploy install --no-adjust-repos {{ grains.localhost }}{%
       for node in pillar.cluster.nodes.initial %} {{ node }}{% endfor %}
-    - user: {{ user_home }}
+    - user: {{ user_name }}
     - cwd: {{ ceph_dir }}
 
 ceph create monitors:

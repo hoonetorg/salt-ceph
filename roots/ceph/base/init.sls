@@ -10,6 +10,14 @@ ceph repo:
     - key_url: {{ pillar.base.repos.ceph.key_url }}
 {% endif %}
 
+ceph-deploy repo:
+  pkgrepo.managed:
+    - name: {{ pillar.base.repos.cephdeploy.name }}
+    - file: {{ pillar.base.repos.cephdeploy.file }}
+{% if pillar.base.repos.cephdeploy.key_url is defined %}
+    - key_url: {{ pillar.base.repos.cephdeploy.key_url }}
+{% endif %}
+
 {% for listname, pkglist in pillar.base.pkgs.items() %}
   {% for pkg in pkglist %}
 {{ listname }} pkg {{ pkg }}:
