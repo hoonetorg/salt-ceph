@@ -19,7 +19,7 @@ your new minion, or modify the minion_id after running the script.
 On a first-time deployment, make sure you call highstate on nodes in this order:
 
 - all initial monitors
-- admin node
+- admin node, twice (mongodb modules won't work on first run)
 - inkscope monitor
 - anything else
 
