@@ -1,3 +1,0 @@
-ceph:
-  service:
-    - running

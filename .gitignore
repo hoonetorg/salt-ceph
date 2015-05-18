@@ -1,3 +1,5 @@
 *~
 .*.sw*
-roots/ceph/base/bucket/ssh
+*.pyc
+roots/bucket/ceph/base/ssh
+pillar/machines/*

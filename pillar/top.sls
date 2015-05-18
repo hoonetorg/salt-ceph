@@ -1,21 +1,21 @@
 base:
   '*':
-    - ceph.base
-    - ceph.base.nodes
-    - inkscope.base
+    - roles.ceph
+    - roles.inkscope
+  'ceph-adm-1':
+    - roles.ceph.cluster.config
+    - roles.ceph.cluster.nodes
+    - roles.ceph.adm
+    - roles.inkscope.adm
   '* and not ceph-adm-*':
     - match: compound
-    - inkscope.base.sysprobe
-  'ceph-adm-*':
-    - ceph.adm
-    - ceph.cluster.nodes
-    - ceph.cluster.config
-    - inkscope.admviz
-  'ceph-mds-*':
-    - ceph.mds
+    - roles.ceph.base.nodes
+    - roles.inkscope.node
+  'ceph-mon-1':
+    - roles.inkscope.mon # only one cephrestapi needed
   'ceph-mon-*':
-    - ceph.monitor
-  'ceph-mon-1*':
-    - inkscope.monitor
+    - roles.ceph.mon
   'ceph-osd-*':
-    - ceph.osd
+    - roles.ceph.osd
+  'ceph-mds-*':
+    - roles.ceph.mds

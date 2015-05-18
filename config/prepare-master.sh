@@ -10,4 +10,4 @@ elif [ "$#" -eq 2 ]; then
 fi
 
 FILE_ROOTS=$1
-ssh-keygen -q -t rsa -f $FILE_ROOTS/ceph/base/bucket/ssh/$ADM_NODE -N ""
+ssh-keygen -q -t rsa -f $FILE_ROOTS/bucket/ceph/base/ssh/$ADM_NODE -N ""
