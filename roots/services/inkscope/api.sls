@@ -33,6 +33,8 @@ ceph-rest-api-clusterconf:
       - cmd: create-ceph-restapi-keyring
     - watch_in:
       - service: ceph
+      - service: inkscope-cephprobe
+      - service: sysprobe
 
 ceph-rest-api-clusterconf-accumulated:
   file.accumulated:
