@@ -20,14 +20,16 @@ On a first-time deployment, make sure you call highstate on nodes in this order:
 
 - all initial monitors
 - admin node
+- inkscope monitor
 - anything else
 
 the reason for this is that the admin node creates the cluster on highstate,
 so the initial monitors need to have ceph packages installed, as well as the
 passwordless sudo access over ssh, before the admin calls them. once the
-cluster is created, call highstate over any OSD or MDS node to automatically
-include it in the cluster (adding a monitor dynamically is not supported yet
-in this state tree).
+cluster is created, call highstate on the inkscope monitor again to configure
+the REST api inkscope needs. then call highstate over any OSD or MDS node to
+automatically include it in the cluster (adding a monitor dynamically is not
+supported yet in this state tree).
 
 <b>Notes</b>
 
