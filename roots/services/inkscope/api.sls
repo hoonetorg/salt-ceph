@@ -114,6 +114,7 @@ restart-apache:
 inkscope-cephprobe:
   service.running:
     - name: cephprobe
+    - enable: True
     - watch:
       - file: inkscope-opt-conf
 

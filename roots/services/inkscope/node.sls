@@ -7,6 +7,7 @@ sysprobe-deps:
 
 sysprobe:
   service.running:
+    - enable: True
     - require:
       - pkg: inkscope-pkgs
     - watch:
