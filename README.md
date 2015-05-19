@@ -16,20 +16,10 @@ your new minion, or modify the minion_id after running the script.
 
 <b>Call order</b>
 
-On a first-time deployment, make sure you call highstate on nodes in this order:
+TODO
 
-- all initial monitors
-- admin node, twice (mongodb modules won't work on first run)
-- inkscope monitor
-- anything else
-
-the reason for this is that the admin node creates the cluster on highstate,
-so the initial monitors need to have ceph packages installed, as well as the
-passwordless sudo access over ssh, before the admin calls them. once the
-cluster is created, call highstate on the inkscope monitor again to configure
-the REST api inkscope needs. then call highstate over any OSD or MDS node to
-automatically include it in the cluster (adding a monitor dynamically is not
-supported yet in this state tree).
+this branch's purpose is to get rid of the admin node and thus of the
+passwordless sudo user with ssh access on all nodes.
 
 <b>Notes</b>
 
