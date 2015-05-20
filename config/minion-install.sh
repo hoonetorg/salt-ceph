@@ -5,7 +5,7 @@ apt-get install python-requests salt-minion
 mkdir -p /etc/salt/minion.d/
 #echo -e "ipv6: True\nmaster: deploy.infralab.arkena.net" > /etc/salt/minion.d/master.conf
 echo -n `hostname -f` > /etc/salt/minion_id
-echo "$SALTMASTER	salt" >> /etc/hosts
+#echo "$SALTMASTER	salt" >> /etc/hosts
 mv /etc/salt/pki /etc/salt/.pki.$TIMESTAMP &&
   echo "backed up minion pki to $TIMESTAMP"
 service salt-minion restart
