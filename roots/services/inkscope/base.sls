@@ -45,6 +45,8 @@ pip-pkg-{{pkg}}:
 
 inkscope-opt-conf:
   file.managed:
+    - require:
+      - pkg: inkscope-pkgs
     - name: /opt/inkscope/etc/inkscope.conf
     - source: salt://templates/inkscope/base/inkscope.conf
     - template: jinja

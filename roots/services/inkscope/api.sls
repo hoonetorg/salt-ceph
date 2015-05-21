@@ -13,6 +13,10 @@ create-ceph-restapi-keyring:
   cmd.run:
     - name: {{ keyring_cmd }} > {{ keyring_file }}
     - creates: {{ keyring_file }}
+    - require:
+      - cmd: start-ceph-mon
+    - watch_in:
+      - cmd: restart-ceph-mon
 
 remove-ceph-restapi-keyring:
   file.absent:
