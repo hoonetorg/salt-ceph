@@ -1,3 +1,5 @@
+{% set cluster_name = pillar.ceph.cluster.name %}
+
 apt-transport-https:
   pkg.installed:
     - require_in:
@@ -51,7 +53,7 @@ inkscope-opt-conf:
     - source: salt://templates/inkscope/base/inkscope.conf
     - template: jinja
     - context:
-      ceph_cluster: ceph
+      cluster_name: {{ cluster_name }}
       ceph_rest_api_host: {{ pillar.inkscope.base.api.host }}
       ceph_rest_api_port: {{ pillar.inkscope.base.api.port }}
       ceph_rest_api_subfolder: ceph-rest-api

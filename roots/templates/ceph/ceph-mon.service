@@ -1,0 +1,6 @@
+[Unit]
+Description=ceph monitor process
+
+[Service]
+EnvironmentFile=/etc/ceph/envfile
+ExecStart=/usr/bin/ceph-mon -f -c ${CONF} -i ${FQDN}

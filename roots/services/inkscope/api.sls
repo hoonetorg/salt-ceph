@@ -1,10 +1,13 @@
 {% set vhost = pillar.inkscope.mon.api.vhost %}
 {% set port = pillar.inkscope.mon.api.port %}
-{% set keyring_cmd = "ceph auth get-or-create client.restapi mds 'allow' osd 'allow *' mon 'allow *'" %}
+{% set cluster_name = pillar.ceph.cluster.name %}
+{% set keyring_cmd = "ceph -c /etc/ceph/" ~ cluster_name ~ ".conf " ~
+"auth get-or-create client.restapi mds 'allow' osd 'allow *' mon 'allow *'" %}
 {% set keyring_file = '/etc/ceph/ceph.client.restapi.keyring' %}
 {% set pip_pkgs = pillar.inkscope.mon.pip_pkgs %}
 {% set cephprobe_cfg = '/opt/inkscope/etc/cephprobe.conf' %}
 {% set cephprobe_bin = '/opt/inkscope/bin/cephprobe.py' %}
+{% set cephrestapi_wsgi = '/var/www/inkscope/inkscopeCtrl/ceph-rest-api.wsgi' %}
 
 
 ## ceph-rest-api
@@ -14,9 +17,7 @@ create-ceph-restapi-keyring:
     - name: {{ keyring_cmd }} > {{ keyring_file }}
     - creates: {{ keyring_file }}
     - require:
-      - cmd: start-ceph-mon
-    - watch_in:
-      - cmd: restart-ceph-mon
+      - service: ceph-mon
 
 remove-ceph-restapi-keyring:
   file.absent:
@@ -26,7 +27,7 @@ remove-ceph-restapi-keyring:
 
 ceph-rest-api-clusterconf:
   file.blockreplace:
-    - name: /etc/ceph/ceph.conf
+    - name: /etc/ceph/{{ cluster_name }}.conf
     - marker_start: "## DO NOT EDIT -- begin ceph-rest-api"
     - marker_end: "## DO NOT EDIT -- end ceph-rest-api"
     - content: '[client.restapi]'
@@ -36,14 +37,13 @@ ceph-rest-api-clusterconf:
     - require:
       - cmd: create-ceph-restapi-keyring
     - watch_in:
-      - service: ceph
+      - cmd: restart-ceph-mon
       - service: inkscope-cephprobe
       - service: sysprobe
 
 ceph-rest-api-clusterconf-accumulated:
   file.accumulated:
-    - filename: /etc/ceph/ceph.conf
-    - name: ceph-rest-api-clusterconf-accumulator
+    - filename: /etc/ceph/{{ cluster_name }}.conf
     - text:
       - "log_file = /dev/null"
       - "keyring = {{ keyring_file }}"
@@ -137,13 +137,31 @@ patch-cephprobe-configfile-path:
     - watch_in:
       - service: inkscope-cephprobe
 
+patch-cephrestapi-wsgi-config:
+  cmd.run:
+    - name: sed -i 's|\("ceph_conf", "/etc/ceph/\)[^\.]*.conf"|\1{{
+      cluster_name }}.conf"|g' {{ cephrestapi_wsgi }}
+    - unless: egrep -q '"ceph_conf", "/etc/ceph/{{ cluster_name }}.conf"' {{
+      cephrestapi_wsgi }}
+    - watch_in:
+      - service: apache2
+
+patch-cephrestapi-wsgi-cluster-name:
+  cmd.run:
+    - name: sed -i 's|^ceph_cluster_name[ \t]*=.*|ceph_cluster_name="{{
+      cluster_name }}"|g' {{ cephrestapi_wsgi }}
+    - unless: egrep -q '^ceph_cluster_name="{{ cluster_name }}"$' {{
+      cephrestapi_wsgi }}
+    - watch_in:
+      - service: apache2
+
 cephprobe-opt-conf:
   file.managed:
     - name: /opt/inkscope/etc/cephprobe.conf
     - source: salt://templates/inkscope/base/inkscope.conf
     - template: jinja
     - context:
-      ceph_cluster: ceph
+      cluster_name: {{ cluster_name }}
       ceph_rest_api_host: {{ pillar.inkscope.mon.api.host }}
       ceph_rest_api_port: {{ pillar.inkscope.mon.api.port }}
       ceph_rest_api_subfolder: ceph-rest-api

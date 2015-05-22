@@ -26,3 +26,7 @@ passwordless sudo user with ssh access on all nodes.
 You should be calling highstate on only one OSD at a time, or Ceph will only
 add the first one to call the admin node to the cluster (it doesn't support
 concurrent calls).
+
+There is a bug is salt as of 22/05/2015 which requires the adm node highstate
+to be called twice to create the user and db in mongodb (see
+https://github.com/saltstack/salt/issues/8933)

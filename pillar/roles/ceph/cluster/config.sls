@@ -1,6 +1,6 @@
 ceph:
   cluster:
-    name: ceph
+    name: ceph-lab
     pool_size: 2
     # not used yet
     #network:

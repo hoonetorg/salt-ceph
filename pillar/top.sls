@@ -1,5 +1,6 @@
 base:
   '*':
+    - mine
     - roles.inkscope
   'ceph-adm-1':
     - roles.inkscope.adm
