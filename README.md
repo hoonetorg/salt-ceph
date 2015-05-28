@@ -15,10 +15,11 @@ your new minion, or modify the minion_id after running the script.
 
 <b>Call order</b>
 
-TODO
-
-this branch's purpose is to get rid of the admin node and thus of the
-passwordless sudo user with ssh access on all nodes.
+You should first create your cluster on the monitor node and then deploy the
+dashboard on the admin node, although it won't hurt to call highstate on the
+admin node first, it just won't have access to your cluster as long as you
+don't call it a second time to retrieve the keyring needed to have the right
+permissions on your cluster to monitor it.
 
 <b>Notes</b>
 
