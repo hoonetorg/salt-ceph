@@ -3,8 +3,7 @@ This is a Salt state tree for a basic Ceph cluster.
 <b>Master Configuration</b>
 
 Make sure the contents of `config/master.d/` are present in the
-`/etc/salt/master.d` directory on the master. It contains the list of reactor
-states that automatically add nodes to the cluster, as well as pillar
+`/etc/salt/master.d` directory on the master. It contains some pillar
 extensions we use.
 
 <b>Minion Configuration</b>

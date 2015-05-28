@@ -45,6 +45,12 @@ pip-pkg-{{pkg}}:
   {% endfor %}
 {% endfor %}
 
+{% if 'adm' in pillar.inkscope.node.type %}
+{% set subfolder = 'ceph_rest_api' %}
+{% else %}
+{% set subfolder = 'ceph-rest-api' %}
+{% endif %}
+
 inkscope-opt-conf:
   file.managed:
     - require:
@@ -56,7 +62,7 @@ inkscope-opt-conf:
       cluster_name: {{ cluster_name }}
       ceph_rest_api_host: {{ pillar.inkscope.base.api.host }}
       ceph_rest_api_port: {{ pillar.inkscope.base.api.port }}
-      ceph_rest_api_subfolder: ceph-rest-api
+      ceph_rest_api_subfolder: {{ subfolder }}
       mongodb_host: {{ pillar.inkscope.base.mongo.host }}
       mongodb_user: {{ pillar.inkscope.base.mongo.user }}
       mongodb_passwd: {{ pillar.inkscope.base.mongo.pass }}
@@ -64,4 +70,6 @@ inkscope-opt-conf:
 inkscope-conf-read-rights:
   cmd.run:
     - name: setfacl -m u:www-data:r /opt/inkscope/etc/inkscope.conf
+    - require:
+      - file: inkscope-opt-conf
     - unless: getfacl /opt/inkscope/etc/inkscope.conf | grep "user:www-data:r"

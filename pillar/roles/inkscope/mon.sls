@@ -1,9 +1,4 @@
 inkscope:
-  pkgs:
-    cephrestapi:
-      - inkscope-cephprobe
-      - inkscope-cephrestapi
-      - inkscope-admviz
   mon:
     api:
       vhost: inkscope

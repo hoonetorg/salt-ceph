@@ -1,0 +1,2 @@
+[client.{{ nodetype }}]
+        key = {{ key }}
