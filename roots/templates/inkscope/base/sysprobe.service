@@ -1,0 +1,13 @@
+[Unit]
+Description=system stat gathering daemon
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=forking
+Restart=always
+ExecStart=/usr/bin/env python /opt/inkscope/bin/sysprobe.py start
+PIDFile=/var/run/sysprobe/sysprobe.pid
+
+[Install]
+WantedBy=multi-user.target

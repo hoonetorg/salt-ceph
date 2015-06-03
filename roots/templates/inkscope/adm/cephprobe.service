@@ -1,0 +1,13 @@
+[Unit]
+Description=cluster stat gathering daemon
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=forking
+Restart=always
+ExecStart=/usr/bin/env python /opt/inkscope/bin/cephprobe.py start
+PIDFile=/var/run/cephprobe/cephprobe.pid
+
+[Install]
+WantedBy=multi-user.target

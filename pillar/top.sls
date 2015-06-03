@@ -11,7 +11,7 @@ base:
     - roles.inkscope.node
   'ceph-mon-1':
     - roles.inkscope.mon # main monitor
-    - mine.bootstrap
+    - mine.ceph.bootstrap
   'ceph-mon-*':
     - roles.ceph.mon
     - roles.ceph.cluster.config

@@ -1,7 +1,8 @@
 include:
   - services.ceph.base.pkgs
 
-{% set mon_id, mon_fqdn = salt['mine.get']('ceph-mon-*', 'fqdn').items()[0] %}
+{% set mon_id, mon_fqdn = salt['mine.get'](
+pillar.ceph.nodes.mon.master, 'fqdn').items()[0] %}
 
 ceph-cluster-bootstrap-osd-keyring:
   file.managed:

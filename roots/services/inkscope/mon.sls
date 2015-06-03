@@ -20,7 +20,7 @@ create-ceph-restapi-keyring:
     - unless: ceph -c /etc/ceph/{{ cluster_name }}.conf auth get client.restapi
     - require:
       - file: ceph-api-keyring-dir
-      - service: ceph-mon
+      - service: ceph-mon@{{ grains.fqdn }}
 
 remove-ceph-restapi-keyring:
   file.absent:

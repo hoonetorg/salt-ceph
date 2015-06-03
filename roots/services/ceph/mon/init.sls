@@ -5,6 +5,11 @@ include:
 {% set fqdn = grains.fqdn %}
 {% set cluster_name = pillar.ceph.cluster.name %}
 
+/var/lib/ceph/admin:
+  file:
+    - directory
+
+# ceph config file
 ceph-conf-global-section-accumulator-mon:
   file.accumulated:
     - filename: /etc/ceph/{{ cluster_name }}.conf
@@ -13,6 +18,28 @@ ceph-conf-global-section-accumulator-mon:
       - "osd pool default size = {{ pillar.ceph.cluster.pool_size }}"
     - require_in:
       - file: ceph-conf-global-section
+
+ceph-conf-admin-section:
+  file.blockreplace:
+    - name: /etc/ceph/{{ cluster_name }}.conf
+    - marker_start: "## DO NOT EDIT -- begin {{ cluster_name }} admin"
+    - marker_end: "## DO NOT EDIT -- end {{ cluster_name }} admin"
+    - content: '[client.admin]'
+    - append_if_not_found: True
+    - backup: '.bak'
+    - show_changes: True
+    - require:
+      - file: ceph-cluster-conf
+    - watch_in:
+      - service: ceph-mon@{{ fqdn }}
+
+ceph-conf-admin-section-accumulator:
+  file.accumulated:
+    - filename: /etc/ceph/{{ cluster_name }}.conf
+    - text:
+      - "keyring = /var/lib/ceph/admin/{{ cluster_name }}.keyring"
+    - require_in:
+      - file: ceph-conf-admin-section
 
 ceph-conf-mon-section:
   file.blockreplace:
@@ -25,10 +52,8 @@ ceph-conf-mon-section:
     - show_changes: True
     - require:
       - file: ceph-cluster-conf
-    - require_in:
-      - cmd: create-ceph-cluster
     - watch_in:
-      - service: ceph-mon
+      - service: ceph-mon@{{ fqdn }}
       - service: sysprobe
 
 ceph-conf-mon-section-accumulator:
@@ -39,50 +64,39 @@ ceph-conf-mon-section-accumulator:
     - require_in:
       - file: ceph-conf-mon-section
 
-create-ceph-cluster:
-  cmd.script:
-    - name: salt://templates/ceph/create_cluster.sh
+ceph-conf-mon.{{fqdn}}-section:
+  file.blockreplace:
+    - name: /etc/ceph/{{ cluster_name }}.conf
+    - marker_start: "## DO NOT EDIT -- begin {{ cluster_name }} id mon.{{ fqdn }}"
+    - marker_end: "## DO NOT EDIT -- end {{ cluster_name }} id mon.{{ fqdn }}"
+    - content: '[mon.{{ fqdn }}]'
+    - append_if_not_found: True
+    - backup: '.bak'
+    - show_changes: True
+    - require:
+      - file: ceph-cluster-conf
     - watch_in:
-      - service: ceph-mon
-    - creates: /var/lib/ceph/mon/{{ cluster_name }}-{{ fqdn }}/done
-    - require:
-      - pkg: ceph-pkgs
-      - file: ceph-conf-global-section
-    - template: jinja
-    - context:
-      fsid: {{ fsid }}
-      fqdn: {{ fqdn }}
-      ip: {{ grains.fqdn_ip4[1] }} # [0] == loopback
-      cluster_name: {{ pillar.ceph.cluster.name }}
+      - service: ceph-mon@{{ fqdn }}
+      - service: sysprobe
 
-{% for nodetype in ['osd', 'mds'] %}
-create-bootstrap-{{nodetype}}-keyring:
-  cmd.script:
-    - name: salt://templates/ceph/create_bootstrap_keyring.sh
-    - require:
-      - service: ceph-mon
-    - unless: ceph -c /etc/ceph/{{ cluster_name }}.conf auth get client.bootstrap-{{ nodetype }}
-    - template: jinja
-    - context:
-      cluster_name: {{ cluster_name }}
-      nodetype: {{ nodetype }}
-{% endfor %}
-
-ceph-mon-unit-env-file:
-  file.managed:
-    - name: /etc/ceph/envfile
-    - contents: |
-        FQDN={{ fqdn }}
-        CONF=/etc/ceph/{{ cluster_name }}.conf
+ceph-conf-mon.{{fqdn}}-section-accumulator:
+  file.accumulated:
+    - filename: /etc/ceph/{{ cluster_name }}.conf
+    - text:
+      - "host = {{ fqdn }}"
+      - "mon addr = {{ grains.ip4_interfaces[pillar.ceph.base.ifaces.pub][0] }}:6789"
+    - require_in:
+      - file: ceph-conf-mon.{{fqdn}}-section
 
 ceph-mon-unit-file:
   file.managed:
-    - name: /etc/systemd/system/ceph-mon.service
-    - source: salt://templates/ceph/ceph-mon.service
-    - require:
-      - file: ceph-mon-unit-env-file
+    - name: /etc/systemd/system/ceph-mon@.service
+    - source: salt://templates/ceph/ceph-mon@.service
+    - template: jinja
+    - context:
+      cluster_name: {{ cluster_name }}
 
-ceph-mon:
+ceph-mon@{{fqdn}}:
   service.running:
     - enable: True
     - require:
@@ -90,7 +104,3 @@ ceph-mon:
       - file: ceph-cluster-conf
       - file: ceph-conf-global-section
       - file: ceph-conf-mon-section
-
-restart-ceph-mon: # ugly, but needed to avoid recursive requisites
-  cmd.wait:
-    - name: service ceph-mon restart

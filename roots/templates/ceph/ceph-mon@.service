@@ -1,0 +1,11 @@
+[Unit]
+Description=ceph monitor process
+Wants=network-online.target local-fs.target
+After=network-online.target local-fs.target
+
+[Service]
+Environment="CLUSTER={{ cluster_name }}"
+ExecStart=/usr/bin/ceph-mon -f -c /etc/ceph/${CLUSTER}.conf -i %i
+
+[Install]
+WantedBy=multi-user.target

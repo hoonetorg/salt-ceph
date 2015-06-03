@@ -39,7 +39,7 @@ ceph-conf-global-section:
       - service: sysprobe
       {% endif %}
       {% if 'mon' in pillar.ceph.node.type %}
-      - service: ceph-mon
+      - service: ceph-mon@{{ grains.fqdn }}
       {% endif %}
       {% if 'adm' in pillar.ceph.node.type %}
       - service: inkscope-cephprobe
@@ -75,3 +75,4 @@ ceph-var-lib-permissions:
       - user
       - group
       - mode
+    - order: last

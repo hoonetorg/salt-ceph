@@ -10,7 +10,15 @@ from    salt._compat import string_types
 def __virtual__():
   return 'bootstrap'
 
-def get_key_from(filename):
+def get_key_from(dirname):
+  _pillar_ = salt.pillar.get_pillar(
+    __opts__,
+    __grains__,
+    __opts__.get('id'),
+    __opts__['environment'],
+  ).compile_pillar()
+
+  filename = dirname + '/' + _pillar_['ceph']['cluster']['name'] + '.keyring'
   with open(filename) as fd:
     for line in fd:
       line = line.rstrip()
@@ -20,44 +28,15 @@ def get_key_from(filename):
         return line.split()[1]
 
 def osd():
-  _pillar_ = salt.pillar.get_pillar(
-    __opts__,
-    __grains__,
-    __opts__.get('id'),
-    __opts__['environment'],
-  ).compile_pillar()
-  return get_key_from('/var/lib/ceph/bootstrap-osd/' +
-    _pillar_['ceph']['cluster']['name'] + '.keyring')
-
+  return get_key_from('/var/lib/ceph/bootstrap-osd')
 
 def mds():
-  _pillar_ = salt.pillar.get_pillar(
-    __opts__,
-    __grains__,
-    __opts__.get('id'),
-    __opts__['environment'],
-  ).compile_pillar()
-  return get_key_from('/var/lib/ceph/bootstrap-mds/' +
-    _pillar_['ceph']['cluster']['name'] + '.keyring')
+  return get_key_from('/var/lib/ceph/bootstrap-mds')
 
 def api():
-  _pillar_ = salt.pillar.get_pillar(
-    __opts__,
-    __grains__,
-    __opts__.get('id'),
-    __opts__['environment'],
-  ).compile_pillar()
   # this path is determined in the inkscope service api states
   # it is NOT standard to any ceph/inkscope package
-  return get_key_from('/var/lib/ceph/restapi/' +
-    _pillar_['ceph']['cluster']['name'] + '.keyring')
+  return get_key_from('/var/lib/ceph/restapi')
 
-def dump():
-  ''' just a debug function '''
-  _pillar_ = salt.pillar.get_pillar(
-    __opts__,
-    __grains__,
-    __opts__.get('id'),
-    __opts__['environment'],
-  ).compile_pillar()
-  return _pillar_['ceph']['base']['ferm']
+def admin():
+  return get_key_from('/var/lib/ceph/admin')

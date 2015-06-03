@@ -153,10 +153,18 @@ ceph-restapi-keyring-read-rights:
 
 ## inkscope
 
+cephprobe-unit-file:
+  file.managed:
+    - name: /etc/systemd/system/cephprobe.service
+    - source: salt://templates/inkscope/adm/cephprobe.service
+
 inkscope-cephprobe:
   service.running:
     - name: cephprobe
     - enable: True
+    - require:
+      - service: mongodb
+      - mongodb_user: mongodb-user-db
     - watch:
       - file: inkscope-opt-conf
 
