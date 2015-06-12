@@ -8,3 +8,6 @@ ceph:
       uid: 1467
     ifaces:
       pub: eth1
+    ntp:
+      servers:
+        - ntp.arkena.net

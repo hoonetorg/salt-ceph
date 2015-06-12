@@ -1,0 +1,11 @@
+[Unit]
+Description=ceph storage node osd.%i process
+Wants=network-online.target local-fs.target
+After=network-online.target local-fs.target
+
+[Service]
+Environment="CLUSTER={{ cluster_name }}"
+ExecStart=/usr/bin/ceph-osd -f --cluster ${CLUSTER} -i %i
+
+[Install]
+WantedBy=multi-user.target
