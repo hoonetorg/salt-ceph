@@ -1,13 +1,10 @@
-ntp:
-  pkg:
-    - installed
-  service:
-    - running
-    - enable: True
-    - watch:
-      - file: /etc/ntp.conf
-
-/etc/ntp.conf:
+/etc/systemd/timesyncd.conf:
   file.managed:
-    - contents: | {% for server in pillar.ceph.base.ntp.servers %}
-        server {{ server }} iburst{% endfor %}
+    - source: salt://templates/ceph/timesyncd.conf
+    - context:
+        servers: {{ pillar.ceph.base.ntp.servers }}
+
+enable-timesyncd:
+  cmd.run:
+    - name: timedatectl set-ntp true
+    - unless: 'timedatectl status | egrep -q "^[ \t]+NTP enabled: yes$"'

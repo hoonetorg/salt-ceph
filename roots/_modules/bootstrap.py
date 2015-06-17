@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import  os
+import  subprocess
 import  collections
 import  yaml
 import  salt.pillar
@@ -18,7 +19,7 @@ def get_key_from(dirname):
     __opts__['environment'],
   ).compile_pillar()
 
-  filename = dirname + '/' + _pillar_['ceph']['cluster']['name'] + '.keyring'
+  filename = '%s/%s.keyring' %(dirname, _pillar_['ceph']['cluster']['name'])
   with open(filename) as fd:
     for line in fd:
       line = line.rstrip()
@@ -40,3 +41,18 @@ def api():
 
 def admin():
   return get_key_from('/var/lib/ceph/admin')
+
+def ids():
+  _pillar_ = salt.pillar.get_pillar(
+    __opts__,
+    __grains__,
+    __opts__.get('id'),
+    __opts__['environment'],
+  ).compile_pillar()
+
+  p = subprocess.Popen('ceph -c /etc/ceph/%s.conf osd tree | ' \
+      'awk \'{if (NR!=1)print $1}\'' %(_pillar_['ceph']['cluster']['name']),
+      stdout=subprocess.PIPE,
+      shell=True)
+  out, err = p.communicate()
+  return [n for n in map(int, out.split()) if n >= -1]

@@ -9,6 +9,7 @@ ceph-pkgs:
     - fromrepo: jessie
     - pkgs:
       - uuid-runtime
+      - hdparm
       - ceph
       - ceph
       - ceph-mds

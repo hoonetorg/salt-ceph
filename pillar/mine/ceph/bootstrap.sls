@@ -8,5 +8,5 @@ mine_functions:
   bootstrap.osd: []
   bootstrap.mds: []
   bootstrap.api: []
-  bootstrap.mon: []
   bootstrap.admin: []
+  bootstrap.ids: []

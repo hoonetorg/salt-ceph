@@ -10,3 +10,6 @@ mv /etc/salt/pki /etc/salt/.pki.$TIMESTAMP &&
   echo "backed up minion pki to $TIMESTAMP"
 service salt-minion restart
 salt-call state.highstate
+apt-get update
+apt-get install -y -t jessie ceph ceph ceph-mds ceph-common ceph-fs-common \
+  python-dev python-rados python-pip radosgw gdisk apt-transport-https hdparm

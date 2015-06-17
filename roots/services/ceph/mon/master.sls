@@ -2,7 +2,6 @@
 {% set fqdn = grains.fqdn %}
 {% set cluster_name = pillar.ceph.cluster.name %}
 {% set tmpdir = '/tmp/' ~ cluster_name ~ '-new-cluster' %}
-{% set mon_id, mon_fqdn = salt['mine.get']('ceph-mon-*', 'fqdn').items()[0] %}
 
 create-ceph-cluster-{{cluster_name}}:
   cmd.script:
