@@ -11,11 +11,11 @@ base:
     - roles.inkscope.node
   'ceph-mon-1':
     - roles.inkscope.mon # main monitor
-    - mine.ceph.bootstrap
   'ceph-mon-*':
     - roles.ceph.mon
     - roles.ceph.cluster.config
     - roles.ceph.cluster.nodes
+    - mine.ceph.bootstrap
   'ceph-osd-*':
     - roles.ceph.osd
   'ceph-mds-*':

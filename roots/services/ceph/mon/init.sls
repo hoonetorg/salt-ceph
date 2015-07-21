@@ -60,7 +60,7 @@ ceph-conf-mon-section-accumulator:
   file.accumulated:
     - filename: /etc/ceph/{{ cluster_name }}.conf
     - text:
-      - "mon data = /var/lib/ceph/mon/{{ cluster_name }}-{{ fqdn }}"
+      - "# ceph mon global section"
     - require_in:
       - file: ceph-conf-mon-section
 
@@ -85,6 +85,7 @@ ceph-conf-mon.{{fqdn}}-section-accumulator:
     - text:
       - "host = {{ fqdn }}"
       - "mon addr = {{ grains.ip4_interfaces[pillar.ceph.base.ifaces.pub][0] }}:6789"
+      - "mon data = /var/lib/ceph/mon/{{ cluster_name }}-{{ fqdn }}"
     - require_in:
       - file: ceph-conf-mon.{{fqdn}}-section
 

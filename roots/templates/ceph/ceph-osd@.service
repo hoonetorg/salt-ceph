@@ -2,6 +2,8 @@
 Description=ceph storage node osd.%i process
 Wants=network-online.target local-fs.target
 After=network-online.target local-fs.target
+Requires=var-lib-ceph-osd-{{ cluster_name }}\x2d%i.mount
+After=var-lib-ceph-osd-{{ cluster_name }}\x2d%i.mount
 
 [Service]
 Environment="CLUSTER={{ cluster_name }}"

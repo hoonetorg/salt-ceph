@@ -13,23 +13,11 @@ ADM_KEY={{ adm_key }}
 TMP_CFG="/tmp/{{ cluster_name }}.conf.tmp"
 echo $TMP_CFG
 
-cp /etc/ceph/{{ cluster_name }}.conf{,.bak} &&
 if [ -f $IDFILE ]; then
   IDL_BAK=1
   cp $IDFILE{,.bak}
 fi &&
-fdisk {{ disk }} << EOF &&
-g
-n
-
-
-+10G
-n
-
-
-
-w
-EOF
+sgdisk {{ disk }} -n 0:0:10G -n 0
 sleep 1 && # wait for /dev/disk/by-partuuid
 DATA_PART="{{ disk }}2" &&
 JRNL_PART=`echo {{ disk }}1 | rev | cut -d '/' -f 1 | rev` &&
@@ -46,7 +34,6 @@ echo -n '{{ disk }} ' >> $IDFILE &&
 GEN_ID=$(ceph -c $TMP_CFG osd create $OSD_UUID | tee -a $IDFILE) &&
 echo "created osd.$GEN_ID, expected $OSD_ID" &&
 [ $GEN_ID == $OSD_ID ] &&
-mkdir "/var/lib/ceph/osd/{{ cluster_name }}-$OSD_ID" &&
 mkfs -t ext4 "$DATA_PART" &&
 mount -o user_xattr "$DATA_PART" \
 "/var/lib/ceph/osd/{{ cluster_name }}-$OSD_ID" &&
@@ -73,9 +60,8 @@ RET=$? CMD=$prev_cmd
 if [ $RET -ne 0 ]; then
   # expand variables in the registered command
   FULLCMD=`eval 'eval "echo $CMD"'`
-  echo "an error occured while running '$FULLCMD'" > /dev/stderr
+  echo "an error occured ($RET) while running '$FULLCMD'" > /dev/stderr
   echo 'cleaning up...' > /dev/stderr
-  cp /etc/ceph/{{ cluster_name }}.conf{.bak,}
   if [ ! -z $IDL_BAK ]; then
     cp $IDFILE{.bak,}
   else
@@ -85,11 +71,8 @@ if [ $RET -ne 0 ]; then
     umount $DATA_PART
   fi
   dd if=/dev/zero of=$DATA_PART bs=1M count=20
-  fdisk {{ disk }} << EOF &&
-g
-w
-EOF
-  rm -rf "/var/lib/ceph/osd/{{ cluster_name }}-$OSD_ID"
+  sgdisk -o {{ disk }}
+  rm -rvf "/var/lib/ceph/osd/{{ cluster_name }}-$OSD_ID"
   if [ ! -z $GEN_ID ]; then
     ceph -c $TMP_CFG osd rm "osd.$GEN_ID"
     ceph -c $TMP_CFG osd crush remove "osd.$GEN_ID"

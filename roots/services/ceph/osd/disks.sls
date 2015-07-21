@@ -11,21 +11,31 @@ admkey = mine(mon_id, 'bootstrap.admin')[mon_id]
 cluster_name = pillar('ceph:cluster:name')
 
 # this line means we have to mine.update the 'master' monitor everytime an osd
-# is added
+# is added or removed
 idlist = mine(pillar('ceph:nodes:mon:master', ''), 'bootstrap.ids')[mon_id]
 available_ids = iter((n for n in itertools.count() if n not in idlist))
 idfile = '/var/lib/ceph/osd/id-file'
 
 for disk in pillar('ceph:osd:disks'):
-    # get the possibly newly created osd id
-    p = subprocess.Popen('grep /dev/%s %s | awk \'{print $2}\'' %(disk, idfile),
-            stdout=subprocess.PIPE, shell=True)
-    out, err = p.communicate()
-    if not out:
+    osd_id_str = None
+    try:
+        with open(idfile) as fd:
+            for line in fd:
+                if disk in line:
+                    fields = line.rstrip('\n').split()
+                    if len(fields) < 2:
+                        raise salt.exceptions.CommandExecutionError(
+                                "formatting error in '%s'" %(idfile))
+                    osd_id_str = fields[1]
+    except IOError as e:
+        raise salt.exceptions.CommandExecutionError(
+                "'%s': %s" %(idfile, e))
+
+    if not osd_id_str:
         osd_id = next(available_ids)
     else:
         try:
-            osd_id = int(out[:-1])
+            osd_id = int(osd_id_str)
         except ValueError as e:
             raise salt.exceptions.CommandExecutionError(
                     "could not retrieve osd id from '%s': %s" %(e))
