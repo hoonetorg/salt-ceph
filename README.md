@@ -21,6 +21,19 @@ highstate on the admin node first, it just won't have access to your cluster as
 long as you don't call it a second time to retrieve the keyring needed to have
 the right permissions on your cluster to monitor it.
 
+In any case, you will have to call one of them twice after the other one is
+setup, because the monitor needs the admin node to run `cephprobe` to send
+its information, and the admin node needs the monitor to have permissions to
+access the cluster.
+
+You should <b>NOT</b> add all monitors to the saltmaster at once. The ceph
+config file is configured to have `ceph-mon-*` ip addresses as monitors, and
+monitor redundancy only tolerates so much failure, so if you add all monitors
+to the saltmaster before creating the cluster, the keyring generation will hang
+indefinitely, thinking that most of the monitors are down. So you should proceed
+step by step and add each monitor one by one and install them right after adding
+them to the saltmaster.
+
 After the first monitor is created, you can add any node in any order you want.
 
 <b>Adding and removing OSDs</b>

@@ -26,6 +26,10 @@ remove-{{cluster_name}}-tmp-mon-dir-onfail:
 create-ceph-mon-{{cluster_name}}:
   cmd.script:
     - name: salt://templates/ceph/create_mon.sh
+    - args: >
+        -i {{ fqdn }}
+        -d {{ tmpdir }}
+        -c {{ cluster_name }}
     - require:
       - pkg: ceph-pkgs
       - file: ceph-conf-global-section
@@ -36,11 +40,6 @@ create-ceph-mon-{{cluster_name}}:
       - service: ceph-mon@{{ fqdn }}
     - unless: "test -d /var/lib/ceph/mon/{{ cluster_name }}-{{ fqdn }} &&
       ceph -c /etc/ceph/{{ cluster_name }}.conf mon stat | grep -q '{{ fqdn }}'"
-    - template: jinja
-    - context:
-      mon_id: {{ fqdn }}
-      tmpdir: {{ tmpdir }}
-      cluster_name: {{ cluster_name }}
 
 add-ceph-mon-{{cluster_name}}:
   cmd.wait:

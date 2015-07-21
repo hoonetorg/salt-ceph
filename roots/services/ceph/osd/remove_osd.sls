@@ -31,11 +31,10 @@ def remove_osd(id_to_remove, disk, identifier=''):
             )
     Cmd.script('remove osd.%d %s' %(id_to_remove, identifier),
             name='salt://templates/ceph/remove_osd.sh',
-            args='-i %d -d %s' %(id_to_remove, disk),
+            args='-i %d -d %s -f %s -c %s' %(
+                id_to_remove, disk, grains('fqdn'), cluster_name),
             template='jinja',
             context={
-                'fqdn': grains('fqdn'),
-                'cluster_name': cluster_name,
                 'adm_key': admkey,
                 },
             require=[

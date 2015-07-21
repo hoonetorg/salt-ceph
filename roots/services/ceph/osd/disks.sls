@@ -28,8 +28,9 @@ for disk in pillar('ceph:osd:disks'):
                                 "formatting error in '%s'" %(idfile))
                     osd_id_str = fields[1]
     except IOError as e:
-        raise salt.exceptions.CommandExecutionError(
-                "'%s': %s" %(idfile, e))
+        if e.errno != 2:
+            raise salt.exceptions.CommandExecutionError(
+                    "'%s': %s" %(idfile, e))
 
     if not osd_id_str:
         osd_id = next(available_ids)
@@ -42,16 +43,13 @@ for disk in pillar('ceph:osd:disks'):
 
     Cmd.script('create-ceph-osd-%s' %osd_id,
             source='salt://templates/ceph/create_osd.sh',
+            args='-i %d -d /dev/%s -c %s -f %s -r %s' %(
+                osd_id, disk, cluster_name, grains('fqdn'), idfile),
             # only if disk is not partitioned
             unless="sed '1,/%s/d' /proc/partitions | grep -q %s" %(disk, disk),
             require=Pkg('ceph-pkgs'),
             template='jinja',
             context={
-                'fqdn': grains('fqdn'),
-                'disk': '/dev/%s' %disk,
-                'idfile': idfile,
-                'osd_id': osd_id,
-                'cluster_name': cluster_name,
                 'adm_key': admkey,
                 }
             )
