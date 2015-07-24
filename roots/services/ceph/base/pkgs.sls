@@ -65,6 +65,11 @@ ceph-conf-global-section-accumulator-node:
     - require_in:
       - file: ceph-conf-global-section
 
+ceph-conf-symlink:
+  file.symlink:
+    - name: /etc/ceph/ceph.conf
+    - target: /etc/ceph/{{ cluster_name }}.conf
+
 ceph-var-lib-permissions:
   file.directory:
     - name: /var/lib/ceph
