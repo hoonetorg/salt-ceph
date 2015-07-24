@@ -56,9 +56,9 @@ Removing an OSD this way will not modify the associated disk. In fact, it will
 not touch it besides unmounting its OSD data partition.
 
 Also, it is imperative to call `mine.update` on the monitors to update the data
-every time you add/remove a node to/from your cluster. Otherwise, next time you
-add a new one, it might try to use a node id that is already in use and it will
-fail.
+<b>every time</b> you add/remove a node to/from your cluster. Otherwise, next
+time youadd a new one, it might try to use a node id that is already in use and
+it will fail.
 
 <b>Notes</b>
 
