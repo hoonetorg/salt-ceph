@@ -36,3 +36,8 @@ supported yet in this state tree).
 You should be calling highstate on only one OSD at a time, or Ceph will only
 add the first one to call the admin node to the cluster (it doesn't support
 concurrent calls).
+
+<b>License</b>
+
+This repository is under the MIT license, please see the LICENSE file for more
+information.
