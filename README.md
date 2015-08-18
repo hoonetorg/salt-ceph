@@ -65,3 +65,8 @@ it will fail.
 There is a bug is salt as of 22/05/2015 which requires the adm node highstate
 to be called twice to create the user and db in mongodb (see
 https://github.com/saltstack/salt/issues/8933)
+
+<b>License</b>
+
+This repository is under the MIT license, please see the LICENSE file for more
+information.
